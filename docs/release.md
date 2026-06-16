@@ -17,6 +17,11 @@ DisMusicPresence uses `major.minor.patch` versioning.
 - Verify local install in a virtual environment.
 - Commit and push the release changes.
 
+## 0.1.2 - 2026-06-16
+
+- Updated Discord Rich Presence payloads to prefer activity details for visible status text where supported.
+- Added Discord field-length protection for long formatted presence strings.
+
 ## 0.1.1 - 2026-06-16
 
 - Added `plex.user_names` for Plex account and Tautulli display-name aliases.

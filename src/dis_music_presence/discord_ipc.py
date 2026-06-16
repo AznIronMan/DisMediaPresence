@@ -16,6 +16,8 @@ from .models import FormattedPresence
 OP_HANDSHAKE = 0
 OP_FRAME = 1
 OP_CLOSE = 2
+MAX_ACTIVITY_FIELD_LENGTH = 128
+STATUS_DISPLAY_DETAILS = 2
 
 
 class DiscordError(RuntimeError):
@@ -55,12 +57,7 @@ class DiscordIpcClient:
     def set_activity(self, presence: FormattedPresence, pid: int | None = None) -> None:
         if self._transport is None:
             self.connect()
-        activity = {
-            "type": presence.activity_type,
-            "details": presence.text,
-            "state": presence.source,
-            "instance": False,
-        }
+        activity = build_activity_payload(presence)
         self._rpc("SET_ACTIVITY", {"pid": pid or os.getpid(), "activity": activity})
 
     def clear_activity(self, pid: int | None = None) -> None:
@@ -114,6 +111,37 @@ def check_discord(client_id: str) -> DiscordStatus:
     except DiscordNotRunningError as exc:
         return DiscordStatus(False, True, str(exc))
     return DiscordStatus(True, True, "Discord IPC socket is available.")
+
+
+def build_activity_payload(presence: FormattedPresence) -> dict[str, object]:
+    details = _activity_details(presence)
+    return {
+        "type": presence.activity_type,
+        "name": _truncate_activity_field(details),
+        "details": _truncate_activity_field(details),
+        "state": _truncate_activity_field(presence.source),
+        "status_display_type": STATUS_DISPLAY_DETAILS,
+        "instance": False,
+    }
+
+
+def _activity_details(presence: FormattedPresence) -> str:
+    text = presence.text.strip()
+    prefixes = {
+        2: ("Listening to ",),
+        3: ("Watching ",),
+    }
+    for prefix in prefixes.get(presence.activity_type, ()):
+        if text.casefold().startswith(prefix.casefold()):
+            return text[len(prefix) :].strip()
+    return text
+
+
+def _truncate_activity_field(value: str) -> str:
+    text = value.strip()
+    if len(text) <= MAX_ACTIVITY_FIELD_LENGTH:
+        return text
+    return text[: MAX_ACTIVITY_FIELD_LENGTH - 3].rstrip() + "..."
 
 
 def _connect_transport() -> "_Transport":
