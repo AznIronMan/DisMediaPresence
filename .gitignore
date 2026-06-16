@@ -1,0 +1,53 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local settings and secrets
+dmp.settings
+*.env
+.env
+.env.*
+!.env.example
+
+# Internal project tracking
+.tasks/
+
+# Logs and runtime output
+logs/
+*.log
+*.pid
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+ENV/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Node or frontend tooling if added later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Packaging and generated artifacts
+artifacts/
+release/
+*.zip
+*.tar.gz
