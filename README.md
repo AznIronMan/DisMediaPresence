@@ -1,6 +1,6 @@
 # DisMusicPresence
 
-Version: `0.5.0`
+Version: `0.6.0`
 Last updated: `2026-06-16`
 
 DisMusicPresence is a local presence bridge for Discord. It reads active playback from Apple Music, Plex, and future media sources, then publishes configurable Discord presence text such as:
@@ -13,12 +13,13 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 
 ## Current Status
 
-`0.5.0` is the current application build-out. It includes:
+`0.6.0` is the current application build-out. It includes:
 
 - Python CLI package with `dmp` command.
 - Local settings file named `dmp.settings`.
 - Configurable listening and watching format templates.
 - Apple Music source provider for macOS.
+- Best-effort Apple Music source provider for Windows through Windows media sessions.
 - Plex source provider through Tautulli or direct Plex server API fallback.
 - Discord local IPC integration with connect, update, clear, and diagnostic behavior.
 - Optional Discord artwork assets from a public custom URL, Tmpfiles-uploaded local image, Tmpfiles-uploaded current Apple Music artwork, Filebin, or Apple/iTunes catalog lookup.
@@ -27,7 +28,7 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 - Runtime loop with source priority, polling, dry-run mode, and shutdown cleanup.
 - Unit tests using Python standard library `unittest`.
 
-Windows and Linux are not primary test targets yet. Plex support is platform-neutral, and Apple Music reports unsupported status outside macOS.
+Windows and Linux are not primary test targets yet. Plex support is platform-neutral. Apple Music on Windows is best-effort, untested, and unsupported until validated on a Windows machine with Apple Music installed.
 
 ## Quick Start
 
@@ -69,10 +70,17 @@ User-facing documentation lives in `docs/`:
 - [Installation](docs/installation.md)
 - [Configuration](docs/configuration.md)
 - [Usage](docs/usage.md)
+- [Player Sources](docs/player-sources.md)
 - [Contributing](docs/contributing.md)
 - [Release Notes](docs/release.md)
 
 ## Changelog
+
+### 0.6.0 - 2026-06-16
+
+- Added best-effort Apple Music for Windows detection through Windows media sessions.
+- Added Windows Apple Music matching configuration.
+- Added player-source roadmap notes for generic OS media sessions, Plexamp, VLC, and local webhook input while deferring Spotify.
 
 ### 0.5.0 - 2026-06-16
 

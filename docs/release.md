@@ -17,6 +17,12 @@ DisMusicPresence uses `major.minor.patch` versioning.
 - Verify local install in a virtual environment.
 - Commit and push the release changes.
 
+## 0.6.0 - 2026-06-16
+
+- Added best-effort Apple Music for Windows detection through Windows media sessions.
+- Added Windows Apple Music matching configuration.
+- Added player-source roadmap notes for generic OS media sessions, Plexamp, VLC, and local webhook input while deferring Spotify.
+
 ## 0.5.0 - 2026-06-16
 
 - Changed the default temporary artwork host to Tmpfiles after live Discord validation showed Filebin images can render as a question-mark placeholder.

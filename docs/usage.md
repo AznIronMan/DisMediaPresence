@@ -96,7 +96,9 @@ This requires Discord to be running and `discord.client_id` to be configured.
 
 ## Apple Music Notes
 
-Apple Music support is macOS-only. If macOS asks for automation permission, allow the terminal or app host running DisMusicPresence to control Music.
+Apple Music support is validated on macOS. If macOS asks for automation permission, allow the terminal or app host running DisMusicPresence to control Music.
+
+Apple Music on Windows is best-effort, untested, and unsupported until validated on a Windows machine with Apple Music installed. It depends on Windows 10 version 1809 or newer and on Apple Music publishing metadata to Windows media sessions.
 
 Paused or stopped Apple Music playback does not publish stale listening presence.
 

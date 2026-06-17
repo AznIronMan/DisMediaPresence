@@ -29,6 +29,7 @@ DEFAULT_SETTINGS: dict[str, str] = {
     "artwork.apple_catalog.size": "600",
     "apple_music.enabled": "true",
     "apple_music.timeout_seconds": "10",
+    "apple_music.windows_app_ids": "AppleMusic,Apple Music,AppleInc.AppleMusic,AppleInc.AppleMusicWin,Apple.Music,Microsoft.AppleMusic",
     "plex.enabled": "false",
     "plex.provider": "auto",
     "tautulli.url": "",

@@ -319,7 +319,7 @@ class AppleCatalogClient:
     ) -> ArtworkAsset | None:
         query = _catalog_query(artist=artist, album=album, title=title, country=country)
         url = f"{self.base_url}?{urllib.parse.urlencode(query)}"
-        request = urllib.request.Request(url, headers={"User-Agent": "DisMusicPresence/0.5.0"})
+        request = urllib.request.Request(url, headers={"User-Agent": "DisMusicPresence/0.6.0"})
         try:
             with urllib.request.urlopen(request, timeout=APPLE_CATALOG_TIMEOUT_SECONDS) as response:
                 data = response.read()
@@ -372,7 +372,7 @@ class FilebinClient:
                 "Content-Type": content_type,
                 "Content-Length": str(len(content)),
                 "Content-SHA256": sha256,
-                "User-Agent": "DisMusicPresence/0.5.0",
+                "User-Agent": "DisMusicPresence/0.6.0",
             },
         )
         try:
@@ -403,7 +403,7 @@ class FilebinClient:
             url = self._bin_url(upload.bin_name)
         else:
             url = self._file_url(upload.bin_name, upload.filename)
-        request = urllib.request.Request(url, method="DELETE", headers={"User-Agent": "DisMusicPresence/0.5.0"})
+        request = urllib.request.Request(url, method="DELETE", headers={"User-Agent": "DisMusicPresence/0.6.0"})
         try:
             with urllib.request.urlopen(request, timeout=FILEBIN_TIMEOUT_SECONDS) as response:
                 status = getattr(response, "status", response.getcode())
@@ -457,7 +457,7 @@ class TmpfilesClient:
             headers={
                 "Content-Type": f"multipart/form-data; boundary={boundary}",
                 "Content-Length": str(len(body)),
-                "User-Agent": "DisMusicPresence/0.5.0",
+                "User-Agent": "DisMusicPresence/0.6.0",
             },
         )
         try:

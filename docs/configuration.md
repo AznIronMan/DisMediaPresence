@@ -79,11 +79,16 @@ episode_title
 ```text
 apple_music.enabled
 apple_music.timeout_seconds
+apple_music.windows_app_ids
 ```
 
-Apple Music is supported on macOS only. The first time the app checks Apple Music, macOS may ask for automation permission.
+Apple Music is supported on macOS. Apple Music on Windows is best-effort and untested. The Windows path reads Windows media sessions and selects the session that appears to belong to Apple Music. Windows media session support depends on Windows 10 version 1809 or newer.
+
+The first time the app checks Apple Music on macOS, macOS may ask for automation permission.
 
 `apple_music.timeout_seconds` defaults to `10` so macOS automation has enough time to return current track metadata.
+
+`apple_music.windows_app_ids` is a comma-separated list of strings used to identify the Apple Music Windows media session. Override it only if diagnostics show that Apple Music for Windows publishes a different session app id on your machine.
 
 ## Artwork Settings
 

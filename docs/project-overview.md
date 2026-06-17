@@ -13,9 +13,10 @@ Target presence examples include:
 ## Sources
 
 - Apple Music on macOS.
+- Apple Music on Windows through best-effort Windows media session detection.
 - Plex through Tautulli when available.
 - Plex through direct Plex server API when Tautulli is not available.
-- Spotify and Linux desktop media players may be added later.
+- Generic OS media sessions, Plexamp, VLC, local webhook input, Spotify, and Linux desktop media players may be added later.
 
 ## Source Priority
 
@@ -38,7 +39,7 @@ Optional artwork support can attach a large image asset to Discord Rich Presence
 ## Platform Status
 
 - macOS: primary development platform and Apple Music target.
-- Windows: planned compatibility target for Discord and Plex behavior.
+- Windows: planned compatibility target for Discord and Plex behavior. Apple Music on Windows is best-effort and untested.
 - Linux: planned compatibility target for Discord and Plex behavior.
 
-Apple Music is macOS-only. Plex source behavior is designed to be platform-neutral.
+Apple Music is validated on macOS and best-effort on Windows through Windows media sessions. Plex source behavior is designed to be platform-neutral.
