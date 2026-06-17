@@ -13,6 +13,7 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import __version__
 from .models import MediaActivity
 from .settings import Settings
 
@@ -22,6 +23,7 @@ FILEBIN_TIMEOUT_SECONDS = 10
 TMPFILES_TIMEOUT_SECONDS = 10
 APPLE_CATALOG_TIMEOUT_SECONDS = 5
 PLEX_ARTWORK_TIMEOUT_SECONDS = 10
+USER_AGENT = f"DisMusicPresence/{__version__}"
 SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 IMAGE_TYPE_SUFFIXES = {
     "image/jpeg": ".jpg",
@@ -370,7 +372,7 @@ class AppleCatalogClient:
     ) -> ArtworkAsset | None:
         query = _catalog_query(artist=artist, album=album, title=title, country=country)
         url = f"{self.base_url}?{urllib.parse.urlencode(query)}"
-        request = urllib.request.Request(url, headers={"User-Agent": "DisMusicPresence/0.8.0"})
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         try:
             with urllib.request.urlopen(request, timeout=APPLE_CATALOG_TIMEOUT_SECONDS) as response:
                 data = response.read()
@@ -423,7 +425,7 @@ class FilebinClient:
                 "Content-Type": content_type,
                 "Content-Length": str(len(content)),
                 "Content-SHA256": sha256,
-                "User-Agent": "DisMusicPresence/0.8.0",
+                "User-Agent": USER_AGENT,
             },
         )
         try:
@@ -454,7 +456,7 @@ class FilebinClient:
             url = self._bin_url(upload.bin_name)
         else:
             url = self._file_url(upload.bin_name, upload.filename)
-        request = urllib.request.Request(url, method="DELETE", headers={"User-Agent": "DisMusicPresence/0.8.0"})
+        request = urllib.request.Request(url, method="DELETE", headers={"User-Agent": USER_AGENT})
         try:
             with urllib.request.urlopen(request, timeout=FILEBIN_TIMEOUT_SECONDS) as response:
                 status = getattr(response, "status", response.getcode())
@@ -508,7 +510,7 @@ class TmpfilesClient:
             headers={
                 "Content-Type": f"multipart/form-data; boundary={boundary}",
                 "Content-Length": str(len(body)),
-                "User-Agent": "DisMusicPresence/0.8.0",
+                "User-Agent": USER_AGENT,
             },
         )
         try:
@@ -549,7 +551,7 @@ def _build_url(base_url: str, path: str, query: dict[str, str]) -> str:
 
 
 def _fetch_bytes(url: str, timeout: int) -> bytes:
-    request = urllib.request.Request(url, headers={"User-Agent": "DisMusicPresence/0.8.0"})
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.read()
 

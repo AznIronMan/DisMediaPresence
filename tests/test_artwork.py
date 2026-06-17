@@ -277,6 +277,16 @@ class ArtworkManagerTests(unittest.TestCase):
 
         self.assertEqual(_plex_image_path(activity, ["grandparent_thumb", "thumb"]), "/show-poster")
 
+    def test_plex_image_path_skips_missing_and_invalid_paths(self) -> None:
+        activity = MediaActivity(
+            kind=ActivityKind.WATCHING,
+            source="Plex",
+            media_type=MediaType.EPISODE,
+            raw={"thumb": "", "grandparent_thumb": "not-a-path", "parent_thumb": "/season-poster", "art": "/fanart"},
+        )
+
+        self.assertEqual(_plex_image_path(activity, []), "/season-poster")
+
     def test_catalog_best_result_ignores_unmatched_results(self) -> None:
         result = _best_catalog_result(
             [{"trackName": "Other", "artistName": "Someone Else", "artworkUrl100": "https://example.test/100x100bb.jpg"}],

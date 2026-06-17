@@ -264,4 +264,6 @@ Run diagnostics after configuring Plex:
 dmp diagnostics
 ```
 
-Plex diagnostics report the selected provider, configured user filter, Tautulli reachability, direct Plex API reachability, total sessions, sessions matching the configured user, and matching sessions that are actively playing.
+Plex diagnostics report the selected provider, configured user filter, Tautulli reachability, direct Plex API reachability, total sessions, sessions matching the configured user, and matching sessions that are active.
+
+Plex sessions in `playing` or `buffering` state publish presence. Paused sessions are treated as idle so Discord does not show stale watch activity. Remote clients and transcoded sessions are supported when the configured Plex user matches the session.

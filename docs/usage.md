@@ -168,6 +168,8 @@ Use `plex.user_names` for every name that may identify the same Plex user. For e
 
 Movies format as `Watching Movie Name`. TV episodes format as `Watching Show Name - SxxExx - Episode Name`.
 
+Plex sessions in `playing` or `buffering` state publish presence. Paused sessions clear or stay idle. Remote clients and transcoded playback are supported as long as the session belongs to the configured Plex user.
+
 When artwork is enabled with the default `tmpfiles` provider, Plex sessions attach item artwork to Discord presence. Tautulli-backed sessions use Tautulli's Plex image proxy; direct Plex API sessions use the Plex server image endpoint.
 
 Use diagnostics when Plex is configured but Discord does not update:
@@ -176,4 +178,4 @@ Use diagnostics when Plex is configured but Discord does not update:
 dmp diagnostics
 ```
 
-The Plex detail lines show whether Tautulli or the direct Plex API is reachable, how many active sessions were found, how many match the configured user, and how many are currently playing.
+The Plex detail lines show whether Tautulli or the direct Plex API is reachable, how many sessions were found, how many match the configured user, and how many matching sessions are active.

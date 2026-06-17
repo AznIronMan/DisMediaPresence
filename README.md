@@ -1,6 +1,6 @@
 # DisMusicPresence
 
-Version: `0.9.1`
+Version: `0.9.2`
 Last updated: `2026-06-16`
 
 DisMusicPresence is a local presence bridge for Discord. It reads active playback from Apple Music, Plex, and future media sources, then publishes configurable Discord presence text such as:
@@ -13,7 +13,7 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 
 ## Current Status
 
-`0.9.1` is the current application build-out. It includes:
+`0.9.2` is the current application build-out. It includes:
 
 - Python CLI package with `dmp` command.
 - Local settings file named `dmp.settings`.
@@ -25,6 +25,7 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 - Best-effort Apple Music source provider for Windows through Windows media sessions.
 - Plex source provider through Tautulli or direct Plex server API fallback.
 - Plex diagnostics with backend reachability and configured-user session counts.
+- Plex hardening for paused, buffering, remote-client, transcoded, movie, episode, and artwork fallback cases.
 - Discord local IPC integration with connect, update, clear, and diagnostic behavior.
 - Optional Discord artwork assets from a public custom URL, Tmpfiles-uploaded local image, Tmpfiles-uploaded current Apple Music artwork, Tmpfiles-uploaded Plex artwork, Filebin, or Apple/iTunes catalog lookup.
 - Automatic Apple Music artwork export through Music.app when temporary artwork hosting is enabled and no local artwork path is configured.
@@ -82,6 +83,12 @@ User-facing documentation lives in `docs/`:
 - [Release Notes](docs/release.md)
 
 ## Changelog
+
+### 0.9.2 - 2026-06-16
+
+- Treated Plex `buffering` sessions as active presence while keeping paused sessions idle.
+- Added tests for Plex paused, buffering, remote-client, transcoded, movie, episode, and artwork fallback cases.
+- Updated Plex diagnostics wording to report active sessions instead of only playing sessions.
 
 ### 0.9.1 - 2026-06-16
 

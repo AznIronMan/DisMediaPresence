@@ -9,13 +9,15 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Any
 
+from .. import __version__
 from ..models import ActivityKind, MediaActivity, MediaType
 from ..settings import Settings
 from .base import SourceCapability, SourceProvider
 
 
 TIMEOUT_SECONDS = 6
-USER_AGENT = "DisMusicPresence/0.8.0"
+USER_AGENT = f"DisMusicPresence/{__version__}"
+ACTIVE_PLEX_STATES = {"playing", "buffering"}
 
 
 @dataclass(frozen=True)
@@ -155,8 +157,8 @@ class PlexProvider(SourceProvider):
         if not isinstance(sessions, list):
             return "tautulli: error - activity response did not include a session list"
 
-        total, matching, playing = self._tautulli_session_counts(sessions)
-        return f"tautulli: reachable - sessions={total}, matching_user={matching}, playing={playing}"
+        total, matching, active = self._tautulli_session_counts(sessions)
+        return f"tautulli: reachable - sessions={total}, matching_user={matching}, active={active}"
 
     def _diagnose_plex(self) -> str:
         base_url = self.settings.get("plex.url")
@@ -171,19 +173,20 @@ class PlexProvider(SourceProvider):
         except ET.ParseError as exc:
             return f"plex_api: error - invalid XML: {exc}"
 
-        total, matching, playing = self._plex_video_counts(root.findall(".//Video"))
-        return f"plex_api: reachable - sessions={total}, matching_user={matching}, playing={playing}"
+        total, matching, active = self._plex_video_counts(root.findall(".//Video"))
+        return f"plex_api: reachable - sessions={total}, matching_user={matching}, active={active}"
 
     def _activity_from_tautulli_sessions(self, sessions: list[dict[str, Any]]) -> MediaActivity:
         matching = [session for session in sessions if self._session_matches_user(session)]
         if not matching:
             return MediaActivity.idle(self.name, "No Plex playback for configured user.")
 
-        playing = [session for session in matching if str(session.get("state", "")).lower() == "playing"]
-        if not playing:
+        active = [session for session in matching if _is_active_plex_state(session.get("state"))]
+        if not active:
             return MediaActivity.idle(self.name, "Configured Plex user is not actively playing media.")
 
-        session = playing[0]
+        session = active[0]
+        player_state = _plex_state(session.get("state")) or "playing"
         media_type = str(session.get("media_type") or session.get("type") or "").lower()
         if media_type == "movie":
             return MediaActivity(
@@ -191,7 +194,7 @@ class PlexProvider(SourceProvider):
                 source="Plex",
                 media_type=MediaType.MOVIE,
                 title=str(session.get("title") or ""),
-                player_state="playing",
+                player_state=player_state,
                 raw=session,
             )
 
@@ -205,7 +208,7 @@ class PlexProvider(SourceProvider):
                 season=_optional_int(session.get("parent_media_index")),
                 episode=_optional_int(session.get("media_index")),
                 episode_title=str(session.get("title") or ""),
-                player_state="playing",
+                player_state=player_state,
                 raw=session,
             )
 
@@ -216,16 +219,18 @@ class PlexProvider(SourceProvider):
         if not matching:
             return MediaActivity.idle(self.name, "No Plex playback for configured user.")
 
-        playing = []
+        active = []
         for video in matching:
             player = video.find("Player")
-            state = (player.get("state") if player is not None else "") or ""
-            if state.lower() == "playing":
-                playing.append(video)
-        if not playing:
+            state = player.get("state") if player is not None else ""
+            if _is_active_plex_state(state):
+                active.append(video)
+        if not active:
             return MediaActivity.idle(self.name, "Configured Plex user is not actively playing media.")
 
-        video = playing[0]
+        video = active[0]
+        player = video.find("Player")
+        player_state = _plex_state(player.get("state") if player is not None else "") or "playing"
         media_type = (video.get("type") or "").lower()
         if media_type == "movie":
             return MediaActivity(
@@ -233,7 +238,7 @@ class PlexProvider(SourceProvider):
                 source="Plex",
                 media_type=MediaType.MOVIE,
                 title=video.get("title") or "",
-                player_state="playing",
+                player_state=player_state,
                 raw=_plex_video_raw(video),
             )
         if media_type == "episode":
@@ -246,7 +251,7 @@ class PlexProvider(SourceProvider):
                 season=_optional_int(video.get("parentIndex")),
                 episode=_optional_int(video.get("index")),
                 episode_title=video.get("title") or "",
-                player_state="playing",
+                player_state=player_state,
                 raw=_plex_video_raw(video),
             )
         return MediaActivity.idle(self.name, f"Unsupported Plex media type: {media_type or 'unknown'}.")
@@ -282,18 +287,18 @@ class PlexProvider(SourceProvider):
 
     def _tautulli_session_counts(self, sessions: list[dict[str, Any]]) -> tuple[int, int, int]:
         matching = [session for session in sessions if self._session_matches_user(session)]
-        playing = [session for session in matching if str(session.get("state", "")).lower() == "playing"]
-        return len(sessions), len(matching), len(playing)
+        active = [session for session in matching if _is_active_plex_state(session.get("state"))]
+        return len(sessions), len(matching), len(active)
 
     def _plex_video_counts(self, videos: list[ET.Element]) -> tuple[int, int, int]:
         matching = [video for video in videos if self._plex_video_matches_user(video)]
-        playing = []
+        active = []
         for video in matching:
             player = video.find("Player")
-            state = (player.get("state") if player is not None else "") or ""
-            if state.lower() == "playing":
-                playing.append(video)
-        return len(videos), len(matching), len(playing)
+            state = player.get("state") if player is not None else ""
+            if _is_active_plex_state(state):
+                active.append(video)
+        return len(videos), len(matching), len(active)
 
     def _user_filter_label(self) -> str:
         names = sorted(self._expected_user_names())
@@ -367,6 +372,14 @@ def _optional_int(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _plex_state(value: Any) -> str:
+    return str(value or "").strip().lower()
+
+
+def _is_active_plex_state(value: Any) -> bool:
+    return _plex_state(value) in ACTIVE_PLEX_STATES
 
 
 def _plex_video_raw(video: ET.Element) -> dict[str, Any]:

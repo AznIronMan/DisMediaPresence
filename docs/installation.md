@@ -10,7 +10,7 @@ DisMusicPresence is currently installed from source.
 - Apple Music on macOS for Apple Music presence.
 - Tautulli or Plex server API access for Plex presence.
 
-There are no runtime third-party Python package dependencies in version `0.9.1`.
+There are no runtime third-party Python package dependencies in version `0.9.2`.
 
 ## Install From Source
 

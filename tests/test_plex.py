@@ -81,6 +81,46 @@ class PlexProviderTests(unittest.TestCase):
 
         self.assertEqual(activity.kind, ActivityKind.IDLE)
 
+    def test_tautulli_paused_session_is_idle(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+
+        activity = provider._activity_from_tautulli_sessions(
+            [{"user": "alex", "state": "paused", "media_type": "movie", "title": "Movie"}]
+        )
+
+        self.assertEqual(activity.kind, ActivityKind.IDLE)
+
+    def test_tautulli_buffering_session_is_active(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+
+        activity = provider._activity_from_tautulli_sessions(
+            [{"user": "alex", "state": "buffering", "media_type": "movie", "title": "Movie"}]
+        )
+
+        self.assertEqual(activity.kind, ActivityKind.WATCHING)
+        self.assertEqual(activity.player_state, "buffering")
+
+    def test_tautulli_remote_transcoded_session_is_active(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+
+        activity = provider._activity_from_tautulli_sessions(
+            [
+                {
+                    "user": "alex",
+                    "state": "playing",
+                    "media_type": "movie",
+                    "title": "Remote Movie",
+                    "location": "wan",
+                    "transcode_decision": "transcode",
+                }
+            ]
+        )
+
+        self.assertEqual(activity.kind, ActivityKind.WATCHING)
+        self.assertEqual(activity.title, "Remote Movie")
+        self.assertEqual(activity.raw["location"], "wan")
+        self.assertEqual(activity.raw["transcode_decision"], "transcode")
+
     def test_plex_xml_movie_matches_user_id(self) -> None:
         provider = PlexProvider(_settings(**{"plex.user_names": "", "plex.username": "", "plex.user_id": "42"}))
         xml = ET.fromstring(
@@ -103,12 +143,69 @@ class PlexProviderTests(unittest.TestCase):
         self.assertEqual(activity.raw["art"], "/movie-art")
         self.assertEqual(activity.raw["rating_key"], "99")
 
+    def test_plex_xml_paused_video_is_idle(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+        xml = ET.fromstring(
+            """
+            <MediaContainer>
+              <Video type="movie" title="Paused">
+                <User title="alex" />
+                <Player state="paused" />
+              </Video>
+            </MediaContainer>
+            """
+        )
+
+        activity = provider._activity_from_plex_videos(xml.findall(".//Video"))
+
+        self.assertEqual(activity.kind, ActivityKind.IDLE)
+
+    def test_plex_xml_buffering_video_is_active(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+        xml = ET.fromstring(
+            """
+            <MediaContainer>
+              <Video type="episode" title="Episode" grandparentTitle="Show" parentIndex="3" index="4">
+                <User title="alex" />
+                <Player state="buffering" />
+              </Video>
+            </MediaContainer>
+            """
+        )
+
+        activity = provider._activity_from_plex_videos(xml.findall(".//Video"))
+
+        self.assertEqual(activity.kind, ActivityKind.WATCHING)
+        self.assertEqual(activity.media_type, MediaType.EPISODE)
+        self.assertEqual(activity.player_state, "buffering")
+        self.assertEqual(activity.show_title, "Show")
+
+    def test_plex_xml_remote_transcoded_video_is_active(self) -> None:
+        provider = PlexProvider(_settings(**{"plex.user_names": "alex"}))
+        xml = ET.fromstring(
+            """
+            <MediaContainer>
+              <Video type="movie" title="Remote Movie" thumb="/thumb">
+                <User title="alex" />
+                <Player state="playing" local="0" remotePublicAddress="203.0.113.10" />
+                <TranscodeSession videoDecision="transcode" audioDecision="transcode" />
+              </Video>
+            </MediaContainer>
+            """
+        )
+
+        activity = provider._activity_from_plex_videos(xml.findall(".//Video"))
+
+        self.assertEqual(activity.kind, ActivityKind.WATCHING)
+        self.assertEqual(activity.title, "Remote Movie")
+        self.assertEqual(activity.raw["thumb"], "/thumb")
+
     def test_tautulli_session_counts_match_configured_user(self) -> None:
         provider = PlexProvider(_settings(**{"plex.user_names": "AznIronMan,Geoff"}))
         sessions = [
             {"user": "other", "state": "playing"},
             {"user": "Geoff", "state": "paused"},
-            {"username": "AznIronMan", "state": "playing"},
+            {"username": "AznIronMan", "state": "buffering"},
         ]
 
         self.assertEqual(provider._tautulli_session_counts(sessions), (3, 2, 1))
@@ -159,8 +256,8 @@ class PlexProviderTests(unittest.TestCase):
             diagnostics = provider.diagnostics()
 
         self.assertIn("provider=auto; user_filter=names=alex", diagnostics)
-        self.assertIn("tautulli: reachable - sessions=1, matching_user=1, playing=1", diagnostics)
-        self.assertIn("plex_api: reachable - sessions=1, matching_user=1, playing=0", diagnostics)
+        self.assertIn("tautulli: reachable - sessions=1, matching_user=1, active=1", diagnostics)
+        self.assertIn("plex_api: reachable - sessions=1, matching_user=1, active=0", diagnostics)
 
 
 if __name__ == "__main__":

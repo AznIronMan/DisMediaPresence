@@ -17,6 +17,13 @@ DisMusicPresence uses `major.minor.patch` versioning.
 - Verify local install in a virtual environment.
 - Commit and push the release changes.
 
+## 0.9.2 - 2026-06-16
+
+- Treated Plex `buffering` sessions as active presence while keeping paused sessions idle.
+- Added Plex provider coverage for paused, buffering, remote-client, transcoded, movie, and episode sessions.
+- Added Plex artwork fallback coverage for missing or invalid image fields.
+- Updated Plex diagnostics wording to report active matching sessions.
+
 ## 0.9.1 - 2026-06-16
 
 - Added startup documentation for foreground runs, macOS LaunchAgent, Linux systemd user service, and Windows Task Scheduler setup.
