@@ -10,7 +10,7 @@ DisMusicPresence is currently installed from source.
 - Apple Music on macOS for Apple Music presence.
 - Tautulli or Plex server API access for Plex presence.
 
-There are no runtime third-party Python package dependencies in version `0.9.0`.
+There are no runtime third-party Python package dependencies in version `0.9.1`.
 
 ## Install From Source
 
@@ -34,6 +34,18 @@ On Windows, activate the virtual environment with:
 ```sh
 python -m unittest discover -s tests
 ```
+
+## Regular Startup
+
+After installing and configuring settings, confirm the app can see Discord and your media sources:
+
+```sh
+dmp diagnostics
+dmp status
+dmp run --once --dry-run
+```
+
+Startup templates and platform-specific regular-run notes are in [Startup](startup.md).
 
 ## Dependency Policy
 

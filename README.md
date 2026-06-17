@@ -1,6 +1,6 @@
 # DisMusicPresence
 
-Version: `0.9.0`
+Version: `0.9.1`
 Last updated: `2026-06-16`
 
 DisMusicPresence is a local presence bridge for Discord. It reads active playback from Apple Music, Plex, and future media sources, then publishes configurable Discord presence text such as:
@@ -13,7 +13,7 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 
 ## Current Status
 
-`0.9.0` is the current application build-out. It includes:
+`0.9.1` is the current application build-out. It includes:
 
 - Python CLI package with `dmp` command.
 - Local settings file named `dmp.settings`.
@@ -30,6 +30,7 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 - Automatic Apple Music artwork export through Music.app when temporary artwork hosting is enabled and no local artwork path is configured.
 - Apple/iTunes catalog fallback when local Apple Music artwork export is unavailable.
 - Runtime loop with source priority, polling, dry-run mode, and shutdown cleanup.
+- Startup guidance and editable macOS/Linux service templates for regular local use.
 - Unit tests using Python standard library `unittest`.
 
 Windows and Linux are not primary test targets yet. Plex support is platform-neutral. Apple Music on Windows is best-effort, untested, and unsupported until validated on a Windows machine with Apple Music installed.
@@ -75,11 +76,18 @@ User-facing documentation lives in `docs/`:
 - [Installation](docs/installation.md)
 - [Configuration](docs/configuration.md)
 - [Usage](docs/usage.md)
+- [Startup](docs/startup.md)
 - [Player Sources](docs/player-sources.md)
 - [Contributing](docs/contributing.md)
 - [Release Notes](docs/release.md)
 
 ## Changelog
+
+### 0.9.1 - 2026-06-16
+
+- Added startup documentation for foreground runs, macOS LaunchAgent, Linux systemd user service, and Windows Task Scheduler setup.
+- Added editable macOS LaunchAgent and Linux systemd user service templates.
+- Verified fresh editable source install and `dmp` command availability.
 
 ### 0.9.0 - 2026-06-16
 

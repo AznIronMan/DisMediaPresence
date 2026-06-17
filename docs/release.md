@@ -17,6 +17,12 @@ DisMusicPresence uses `major.minor.patch` versioning.
 - Verify local install in a virtual environment.
 - Commit and push the release changes.
 
+## 0.9.1 - 2026-06-16
+
+- Added startup documentation for foreground runs, macOS LaunchAgent, Linux systemd user service, and Windows Task Scheduler setup.
+- Added editable startup templates for macOS LaunchAgent and Linux systemd user service.
+- Verified editable source install and `dmp` command availability from a fresh virtual environment.
+
 ## 0.9.0 - 2026-06-16
 
 - Added source priority commands for showing and setting active-source precedence.

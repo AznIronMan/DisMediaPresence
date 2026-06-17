@@ -82,6 +82,8 @@ Run without updating Discord:
 dmp run --dry-run
 ```
 
+For regular startup at login, see [Startup](startup.md).
+
 Discord may still show the registered application name as the Rich Presence app label. DisMusicPresence sends the formatted media text as the activity details and asks Discord to use details for the visible status text where supported. Long media text is shortened before sending because Discord limits Rich Presence text fields.
 
 ## Artwork
