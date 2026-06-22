@@ -10,7 +10,7 @@ from .discord_ipc import DiscordError, DiscordIpcClient
 from .formatter import PresenceFormatter
 from .models import FormattedPresence, MediaActivity
 from .settings import Settings
-from .sources import AppleMusicProvider, PlexProvider, SourceProvider
+from .sources import AppleMusicProvider, PlexProvider, SourceProvider, SpotifyProvider
 
 LOGGER = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ class PresenceRuntime:
 
     def _select_activity(self) -> MediaActivity | None:
         provider_by_name = {provider.name: provider for provider in self.providers}
-        for name in self.settings.list("app.source_priority", ["apple_music", "plex"]):
+        for name in _effective_source_priority(self.settings, self.providers):
             provider = provider_by_name.get(name)
             if provider is None:
                 LOGGER.warning("Configured source %s is not available.", name)
@@ -122,4 +122,12 @@ class PresenceRuntime:
 
 
 def build_providers(settings: Settings) -> list[SourceProvider]:
-    return [AppleMusicProvider(settings), PlexProvider(settings)]
+    return [AppleMusicProvider(settings), SpotifyProvider(settings), PlexProvider(settings)]
+
+
+def _effective_source_priority(settings: Settings, providers: list[SourceProvider]) -> list[str]:
+    priority = settings.list("app.source_priority", [])
+    for provider in providers:
+        if provider.name not in priority:
+            priority.append(provider.name)
+    return priority

@@ -115,9 +115,15 @@ class ArtworkManager:
             artwork = self._temporary_upload(activity, provider)
             if artwork is not None:
                 return artwork
+            artwork = self._spotify_artwork(activity)
+            if artwork is not None:
+                return artwork
             return self._apple_catalog(activity)
         if provider == "filebin":
             artwork = self._temporary_upload(activity, provider)
+            if artwork is not None:
+                return artwork
+            artwork = self._spotify_artwork(activity)
             if artwork is not None:
                 return artwork
             return self._apple_catalog(activity)
@@ -250,6 +256,17 @@ class ArtworkManager:
         )
         self._catalog_cache[cache_key] = artwork
         return artwork
+
+    def _spotify_artwork(self, activity: MediaActivity) -> ArtworkAsset | None:
+        if not self.settings.bool("artwork.spotify.enabled", True):
+            return None
+        if activity.source != "Spotify" or not isinstance(activity.raw, dict):
+            return None
+        url = str(activity.raw.get("artwork_url") or "").strip()
+        if not url:
+            return None
+        _validate_public_url(url)
+        return ArtworkAsset(image_url=url, image_text=self._image_text(activity))
 
     def _image_text(self, activity: MediaActivity) -> str:
         configured = self.settings.get("artwork.custom_text").strip()

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dis-media-presence"
-version = "1.0.1"
-description = "Local media-to-Discord presence bridge for Apple Music, Plex, and future sources."
+version = "1.1.0"
+description = "Local media-to-Discord presence bridge for Apple Music, Spotify, Plex, and future sources."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "BSD-3-Clause"

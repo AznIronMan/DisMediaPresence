@@ -8,9 +8,10 @@ DisMediaPresence is currently installed from source.
 - Discord desktop client for local rich presence support.
 - A Discord application client ID.
 - Apple Music on macOS for Apple Music presence.
+- Spotify for macOS for local Spotify presence.
 - Tautulli or Plex server API access for Plex presence.
 
-There are no runtime third-party Python package dependencies in version `1.0.1`.
+There are no runtime third-party Python package dependencies in version `1.1.0`.
 
 ## Install From Source
 
@@ -25,12 +26,12 @@ dmp version
 
 ## Install From Release Artifact
 
-The `1.0.1` release supports standard Python wheel and source distribution artifacts. If you have a built wheel, install it with:
+The `1.1.0` release supports standard Python wheel and source distribution artifacts. If you have a built wheel, install it with:
 
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install dist/dis_media_presence-1.0.1-py3-none-any.whl
+python -m pip install dist/dis_media_presence-1.1.0-py3-none-any.whl
 dmp version
 ```
 

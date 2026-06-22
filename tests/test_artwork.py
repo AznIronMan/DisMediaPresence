@@ -105,6 +105,19 @@ def _plex_activity() -> MediaActivity:
     )
 
 
+def _spotify_activity() -> MediaActivity:
+    return MediaActivity(
+        kind=ActivityKind.LISTENING,
+        source="Spotify",
+        media_type=MediaType.MUSIC,
+        title="Song",
+        artist="Artist",
+        album="Album",
+        player_state="playing",
+        raw={"artwork_url": "https://i.scdn.co/image/cover"},
+    )
+
+
 class ArtworkManagerTests(unittest.TestCase):
     def test_tmpfiles_default_does_nothing_without_artwork(self) -> None:
         tmpfiles = FakeTmpfilesClient()
@@ -172,6 +185,21 @@ class ArtworkManagerTests(unittest.TestCase):
             self.assertTrue(str(tmpfiles.uploads[0]["filename"]).endswith(".jpg"))
             self.assertEqual(len(plex.exports), 1)
             self.assertFalse(path.exists())
+
+    def test_tmpfiles_default_uses_spotify_artwork_url(self) -> None:
+        tmpfiles = FakeTmpfilesClient()
+        manager = ArtworkManager(
+            _settings(),
+            tmpfiles_client=tmpfiles,
+            apple_catalog_client=FakeAppleCatalogClient(),
+            apple_music_artwork_exporter=FakeAppleMusicArtworkExporter(),
+        )
+
+        artwork = manager.resolve(_spotify_activity())
+
+        self.assertEqual(artwork.image_url, "https://i.scdn.co/image/cover")
+        self.assertEqual(artwork.image_text, "Album - Artist")
+        self.assertEqual(tmpfiles.uploads, [])
 
     def test_tmpfiles_default_reuses_current_apple_music_artwork_upload(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

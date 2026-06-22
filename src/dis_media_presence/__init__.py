@@ -22,6 +22,7 @@ _ALIASED_MODULES = (
     "sources.apple_music",
     "sources.base",
     "sources.plex",
+    "sources.spotify",
 )
 
 _real_package = importlib.import_module(_REAL_PACKAGE)

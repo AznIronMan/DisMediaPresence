@@ -1,9 +1,9 @@
 # DisMediaPresence
 
-Version: `1.0.1`
+Version: `1.1.0`
 Last updated: `2026-06-22`
 
-DisMediaPresence is a local presence bridge for Discord. It reads active playback from Apple Music, Plex, and future media sources, then publishes configurable Discord presence text such as:
+DisMediaPresence is a local presence bridge for Discord. It reads active playback from Apple Music, Spotify, Plex, and future media sources, then publishes configurable Discord presence text such as:
 
 - `Listening to Artist - Song`
 - `Watching Movie Name`
@@ -13,30 +13,32 @@ The project is developed by Street Kings Productions, a Clark & Burke LLC compan
 
 ## Current Status
 
-`1.0.1` is the current stable release. It includes:
+`1.1.0` is the current stable release. It includes:
 
 - Python CLI package with `dmp` command.
 - Rebranded package metadata and documentation for DisMediaPresence.
 - Forward-compatible `dis_media_presence` imports while preserving legacy `dis_music_presence` imports.
 - Local settings file named `dmp.settings`.
-- Interactive setup menu for common Discord, source priority, Apple Music, Plex, and artwork settings.
-- Source priority controls for deciding whether Apple Music or Plex wins when both are active.
+- Interactive setup menu for common Discord, source priority, Apple Music, Spotify, Plex, and artwork settings.
+- Source priority controls for deciding whether Apple Music, Spotify, or Plex wins when multiple sources are active.
 - Status command showing current source priority and the active source that would update Discord.
 - Configurable listening and watching format templates.
 - Apple Music source provider for macOS.
 - Best-effort Apple Music source provider for Windows through Windows media sessions.
+- Spotify source provider for macOS through Spotify.app automation.
+- Best-effort Spotify source providers for Windows media sessions and Linux MPRIS/playerctl metadata.
 - Plex source provider through Tautulli or direct Plex server API fallback.
 - Plex diagnostics with backend reachability and configured-user session counts.
 - Plex hardening for paused, buffering, remote-client, transcoded, movie, episode, and artwork fallback cases.
 - Discord local IPC integration with connect, update, clear, and diagnostic behavior.
-- Optional Discord artwork assets from a public custom URL, Tmpfiles-uploaded local image, Tmpfiles-uploaded current Apple Music artwork, Tmpfiles-uploaded Plex artwork, Filebin, or Apple/iTunes catalog lookup.
+- Optional Discord artwork assets from a public custom URL, Tmpfiles-uploaded local image, Tmpfiles-uploaded current Apple Music artwork, Spotify artwork URLs, Tmpfiles-uploaded Plex artwork, Filebin, or Apple/iTunes catalog lookup.
 - Automatic Apple Music artwork export through Music.app when temporary artwork hosting is enabled and no local artwork path is configured.
 - Apple/iTunes catalog fallback when local Apple Music artwork export is unavailable.
 - Runtime loop with source priority, polling, dry-run mode, and shutdown cleanup.
 - Startup guidance and editable macOS/Linux service templates for regular local use.
 - Unit tests using Python standard library `unittest`.
 
-Windows and Linux are not primary test targets yet. Plex support is designed to be platform-neutral. Apple Music on Windows is best-effort, untested, and unsupported until validated on a Windows machine with Apple Music installed.
+Windows and Linux are not primary test targets yet. Plex support is designed to be platform-neutral. Apple Music and Spotify on Windows are best-effort through Windows media sessions. Spotify on Linux is best-effort through `playerctl` or `dbus-send`.
 
 ## Quick Start
 
@@ -51,7 +53,7 @@ dmp diagnostics
 dmp run
 ```
 
-For macOS Apple Music only, the default source settings are enough once Discord is configured. For Plex, enable and configure either Tautulli or direct Plex server API settings.
+For macOS Apple Music only, the default source settings are enough once Discord is configured. For Spotify or Plex, enable the source with `dmp setup` and configure any required platform support.
 
 ## Project Rules
 
@@ -87,6 +89,13 @@ User-facing documentation lives in `docs/`:
 - [Release Notes](docs/release.md)
 
 ## Changelog
+
+### 1.1.0 - 2026-06-22
+
+- Added a Spotify source provider for macOS through Spotify.app automation.
+- Added best-effort Spotify playback detection for Windows media sessions and Linux `playerctl`/MPRIS metadata.
+- Added Spotify settings, setup prompts, source-priority support, diagnostics, and artwork URL support.
+- Kept Spotify disabled by default so existing installs keep their current Apple Music/Plex behavior until explicitly enabled.
 
 ### 1.0.1 - 2026-06-22
 

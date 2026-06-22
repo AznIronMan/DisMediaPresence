@@ -25,7 +25,7 @@ class CliTests(unittest.TestCase):
             code = main(["version"])
 
         self.assertEqual(code, 0)
-        self.assertIn("1.0.1", output.getvalue())
+        self.assertIn("1.1.0", output.getvalue())
 
     def test_rebranded_import_alias_uses_existing_cli(self) -> None:
         self.assertEqual(dis_media_presence.APP_NAME, "DisMediaPresence")
@@ -58,8 +58,8 @@ class CliTests(unittest.TestCase):
 
             settings = load_settings(settings_path)
             self.assertEqual(code, 0)
-            self.assertEqual(settings.get("app.source_priority"), "plex,apple_music")
-            self.assertIn("plex > apple_music", output.getvalue())
+            self.assertEqual(settings.get("app.source_priority"), "plex,apple_music,spotify")
+            self.assertIn("plex > apple_music > spotify", output.getvalue())
 
     def test_status_reports_active_priority_winner(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -78,6 +78,10 @@ class CliTests(unittest.TestCase):
                         artist="Artist",
                         player_state="playing",
                     ),
+                ),
+                _FakeProvider(
+                    "spotify",
+                    MediaActivity.idle("spotify", "mock"),
                 ),
                 _FakeProvider(
                     "plex",

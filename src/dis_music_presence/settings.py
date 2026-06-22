@@ -8,7 +8,7 @@ from pathlib import Path
 
 DEFAULT_SETTINGS: dict[str, str] = {
     "app.poll_interval_seconds": "15",
-    "app.source_priority": "apple_music,plex",
+    "app.source_priority": "apple_music,spotify,plex",
     "discord.enabled": "true",
     "discord.client_id": "",
     "format.listening": "Listening to {artist} - {title}",
@@ -24,6 +24,7 @@ DEFAULT_SETTINGS: dict[str, str] = {
     "artwork.filebin.delete_on_shutdown": "true",
     "artwork.tmpfiles.base_url": "https://tmpfiles.org",
     "artwork.apple_music.enabled": "true",
+    "artwork.spotify.enabled": "true",
     "artwork.plex.enabled": "true",
     "artwork.plex.image_fields": "thumb,grandparent_thumb,parent_thumb,art",
     "artwork.plex.width": "600",
@@ -35,6 +36,10 @@ DEFAULT_SETTINGS: dict[str, str] = {
     "apple_music.enabled": "true",
     "apple_music.timeout_seconds": "10",
     "apple_music.windows_app_ids": "AppleMusic,Apple Music,AppleInc.AppleMusic,AppleInc.AppleMusicWin,Apple.Music,Microsoft.AppleMusic",
+    "spotify.enabled": "false",
+    "spotify.timeout_seconds": "10",
+    "spotify.windows_app_ids": "Spotify,Spotify.exe,SpotifyAB.SpotifyMusic,SpotifyMusic",
+    "spotify.linux_player_names": "spotify",
     "plex.enabled": "false",
     "plex.provider": "auto",
     "tautulli.url": "",

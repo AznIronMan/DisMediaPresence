@@ -55,13 +55,19 @@ dmp priority
 Make Plex win over Apple Music:
 
 ```sh
-dmp priority set plex,apple_music
+dmp priority set plex,apple_music,spotify
 ```
 
-Make Apple Music win over Plex:
+Make Spotify win over Apple Music and Plex:
 
 ```sh
-dmp priority set apple_music,plex
+dmp priority set spotify,apple_music,plex
+```
+
+Make Apple Music win over Spotify and Plex:
+
+```sh
+dmp priority set apple_music,spotify,plex
 ```
 
 ## Run The Bridge
@@ -90,7 +96,7 @@ For production use, rename the Discord Developer Portal application to DisMediaP
 
 ## Artwork
 
-Tmpfiles is the default artwork provider. If no local artwork path is configured, Apple Music tracks export the current Music.app artwork and upload it to Tmpfiles. If local artwork is unavailable, Apple Music tracks use Apple/iTunes catalog artwork when a match is found.
+Tmpfiles is the default artwork provider. If no local artwork path is configured, Apple Music tracks export the current Music.app artwork and upload it to Tmpfiles. Spotify tracks use Spotify's public artwork URL when available. If local artwork is unavailable, Apple Music tracks use Apple/iTunes catalog artwork when a match is found.
 
 Use a public custom artwork URL:
 
@@ -120,6 +126,12 @@ Disable automatic Apple Music artwork export:
 dmp config set artwork.apple_music.enabled false
 ```
 
+Disable Spotify artwork URLs:
+
+```sh
+dmp config set artwork.spotify.enabled false
+```
+
 Use only Apple/iTunes catalog artwork:
 
 ```sh
@@ -141,6 +153,20 @@ Apple Music support is validated on macOS. If macOS asks for automation permissi
 Apple Music on Windows is best-effort, untested, and unsupported until validated on a Windows machine with Apple Music installed. It depends on Windows 10 version 1809 or newer and on Apple Music publishing metadata to Windows media sessions.
 
 Paused or stopped Apple Music playback does not publish stale listening presence.
+
+## Spotify Notes
+
+Spotify support is disabled by default:
+
+```sh
+dmp config set spotify.enabled true
+```
+
+On macOS, DisMediaPresence reads the local Spotify app through AppleScript. The first time it checks Spotify, macOS may ask for automation permission. Allow the terminal or app host running DisMediaPresence to control Spotify.
+
+Spotify on Windows is best-effort through Windows media sessions. Spotify on Linux is best-effort through `playerctl` when available, with `dbus-send` as a fallback for MPRIS metadata.
+
+Paused or stopped Spotify playback does not publish stale listening presence.
 
 ## Plex Notes
 

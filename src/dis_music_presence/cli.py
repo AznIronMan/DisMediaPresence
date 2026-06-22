@@ -20,6 +20,8 @@ SOURCE_ALIASES = {
     "apple_music": "apple_music",
     "music": "apple_music",
     "plex": "plex",
+    "sp": "spotify",
+    "spotify": "spotify",
 }
 
 
@@ -253,9 +255,10 @@ def _cmd_setup(args: argparse.Namespace) -> int:
         print("1. Discord")
         print("2. Source priority")
         print("3. Apple Music")
-        print("4. Plex")
-        print("5. Artwork")
-        print("6. Show settings")
+        print("4. Spotify")
+        print("5. Plex")
+        print("6. Artwork")
+        print("7. Show settings")
         print("q. Quit")
         choice = input("Select: ").strip().lower()
 
@@ -268,10 +271,12 @@ def _cmd_setup(args: argparse.Namespace) -> int:
         elif choice == "3":
             _setup_apple_music(settings)
         elif choice == "4":
-            _setup_plex(settings)
+            _setup_spotify(settings)
         elif choice == "5":
-            _setup_artwork(settings)
+            _setup_plex(settings)
         elif choice == "6":
+            _setup_artwork(settings)
+        elif choice == "7":
             for key, value in settings.redacted().items():
                 print(f"{key}={value}")
         else:
@@ -346,15 +351,18 @@ def _setup_priority(settings) -> None:
     current = _effective_source_priority(settings, build_providers(settings))
     print(f"Current source priority: {_priority_label(current)}")
     print("1. Apple Music first")
-    print("2. Plex first")
-    print("3. Custom")
+    print("2. Spotify first")
+    print("3. Plex first")
+    print("4. Custom")
     choice = input("Select: ").strip().lower()
 
     if choice == "1":
-        priority = ["apple_music", "plex"]
+        priority = ["apple_music", "spotify", "plex"]
     elif choice == "2":
-        priority = ["plex", "apple_music"]
+        priority = ["spotify", "apple_music", "plex"]
     elif choice == "3":
+        priority = ["plex", "apple_music", "spotify"]
+    elif choice == "4":
         raw = input("Source priority: ").strip()
         priority = _normalize_source_priority(raw, _known_source_names(build_providers(settings)))
     else:
@@ -372,6 +380,17 @@ def _setup_apple_music(settings) -> None:
     _set_if_value(settings, "apple_music.timeout_seconds", timeout)
     windows_ids = _prompt_value("Windows Apple Music app IDs", settings.get("apple_music.windows_app_ids"))
     _set_if_value(settings, "apple_music.windows_app_ids", windows_ids)
+
+
+def _setup_spotify(settings) -> None:
+    enabled = _prompt_bool("Enable Spotify source", settings.bool("spotify.enabled", False))
+    _set_if_value(settings, "spotify.enabled", _bool_text(enabled))
+    timeout = _prompt_value("Spotify timeout seconds", settings.get("spotify.timeout_seconds"))
+    _set_if_value(settings, "spotify.timeout_seconds", timeout)
+    windows_ids = _prompt_value("Windows Spotify app IDs", settings.get("spotify.windows_app_ids"))
+    _set_if_value(settings, "spotify.windows_app_ids", windows_ids)
+    linux_names = _prompt_value("Linux Spotify MPRIS player names", settings.get("spotify.linux_player_names"))
+    _set_if_value(settings, "spotify.linux_player_names", linux_names)
 
 
 def _setup_plex(settings) -> None:
@@ -409,6 +428,8 @@ def _setup_artwork(settings) -> None:
     _set_if_value(settings, "artwork.custom_url", custom_url)
     apple_enabled = _prompt_bool("Enable automatic Apple Music artwork", settings.bool("artwork.apple_music.enabled", True))
     _set_if_value(settings, "artwork.apple_music.enabled", _bool_text(apple_enabled))
+    spotify_enabled = _prompt_bool("Enable Spotify artwork URLs", settings.bool("artwork.spotify.enabled", True))
+    _set_if_value(settings, "artwork.spotify.enabled", _bool_text(spotify_enabled))
     plex_enabled = _prompt_bool("Enable Plex artwork", settings.bool("artwork.plex.enabled", True))
     _set_if_value(settings, "artwork.plex.enabled", _bool_text(plex_enabled))
 

@@ -9,7 +9,7 @@ This file defines repository rules for human operators and AI coding agents work
 - Company: Clark & Burke LLC
 - Website: https://www.cnb.llc
 - Developer email: streetkings@cnb.llc
-- Current version: `1.0.1`
+- Current version: `1.1.0`
 
 ## Required Workflow
 
@@ -46,5 +46,6 @@ This file defines repository rules for human operators and AI coding agents work
 - Planned primary runtime: Python CLI.
 - Planned first source: Apple Music on macOS.
 - Planned Plex source: Tautulli API.
-- Planned future sources may include Spotify and Linux media-player equivalents.
+- Spotify support is available for macOS with best-effort Windows and Linux support.
+- Planned future sources may include generic Linux media-player equivalents and Spotify Web API support.
 - Presence formatting should be configurable and should not be unnecessarily hard-coded.

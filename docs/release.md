@@ -41,9 +41,16 @@ Verify the wheel in a clean virtual environment:
 
 ```sh
 python3 -m venv /tmp/dmp-release-check
-/tmp/dmp-release-check/bin/python -m pip install dist/dis_media_presence-1.0.1-py3-none-any.whl
+/tmp/dmp-release-check/bin/python -m pip install dist/dis_media_presence-1.1.0-py3-none-any.whl
 /tmp/dmp-release-check/bin/dmp version
 ```
+
+## 1.1.0 - 2026-06-22
+
+- Added Spotify as a configurable source for macOS through Spotify.app automation.
+- Added best-effort Spotify detection for Windows media sessions and Linux `playerctl`/MPRIS metadata.
+- Added Spotify setup prompts, settings, diagnostics, source-priority integration, and artwork URL support.
+- Kept Spotify disabled by default for existing installs.
 
 ## 1.0.1 - 2026-06-22
 

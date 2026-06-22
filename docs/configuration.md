@@ -46,13 +46,13 @@ discord.client_id
 Default source priority is:
 
 ```text
-apple_music,plex
+apple_music,spotify,plex
 ```
 
-The first active source in the list wins. With the default priority, Apple Music updates Discord when Apple Music and Plex are both playing. Put Plex first when Plex should win:
+The first active source in the list wins. With the default priority, Apple Music updates Discord when Apple Music, Spotify, and Plex are all playing. Put Plex first when Plex should win:
 
 ```sh
-dmp priority set plex,apple_music
+dmp priority set plex,apple_music,spotify
 ```
 
 Show the current priority:
@@ -110,6 +110,29 @@ The first time the app checks Apple Music on macOS, macOS may ask for automation
 
 `apple_music.windows_app_ids` is a comma-separated list of strings used to identify the Apple Music Windows media session. Override it only if diagnostics show that Apple Music for Windows publishes a different session app id on your machine.
 
+## Spotify Settings
+
+```text
+spotify.enabled
+spotify.timeout_seconds
+spotify.windows_app_ids
+spotify.linux_player_names
+```
+
+Spotify is disabled by default. On macOS, DisMediaPresence reads the local Spotify app through AppleScript and does not require Spotify Web API OAuth.
+
+Enable Spotify:
+
+```sh
+dmp config set spotify.enabled true
+```
+
+`spotify.timeout_seconds` defaults to `10`.
+
+`spotify.windows_app_ids` is a comma-separated list of strings used to identify Spotify in Windows media sessions. Override it only if diagnostics show that Spotify publishes a different session app id on your machine.
+
+`spotify.linux_player_names` defaults to `spotify`. Linux support is best-effort through `playerctl` when available, or `dbus-send` against the MPRIS player name.
+
 ## Artwork Settings
 
 ```text
@@ -123,6 +146,7 @@ artwork.filebin.bin
 artwork.filebin.delete_on_shutdown
 artwork.tmpfiles.base_url
 artwork.apple_music.enabled
+artwork.spotify.enabled
 artwork.plex.enabled
 artwork.plex.image_fields
 artwork.plex.width
@@ -143,7 +167,7 @@ tmpfiles
 filebin
 ```
 
-The default provider is `tmpfiles`. If `artwork.upload.path` points to a local image file, that image is uploaded to temporary hosting. If no local path is configured and `artwork.apple_music.enabled` is true, Apple Music tracks export the current Music.app artwork and upload it to temporary hosting. If no local path is configured and `artwork.plex.enabled` is true, Plex sessions use item artwork from Tautulli or the direct Plex API and upload it to temporary hosting. When local artwork is unavailable, Apple Music tracks fall back to Apple/iTunes catalog artwork if `artwork.apple_catalog.enabled` is true.
+The default provider is `tmpfiles`. If `artwork.upload.path` points to a local image file, that image is uploaded to temporary hosting. If no local path is configured and `artwork.apple_music.enabled` is true, Apple Music tracks export the current Music.app artwork and upload it to temporary hosting. If no local path is configured and `artwork.spotify.enabled` is true, Spotify tracks use Spotify's public artwork URL when one is available. If no local path is configured and `artwork.plex.enabled` is true, Plex sessions use item artwork from Tautulli or the direct Plex API and upload it to temporary hosting. When local artwork is unavailable, Apple Music tracks fall back to Apple/iTunes catalog artwork if `artwork.apple_catalog.enabled` is true.
 
 Use `custom_url` when you already have a public image URL:
 
@@ -179,6 +203,12 @@ Disable automatic current Apple Music artwork export:
 
 ```sh
 dmp config set artwork.apple_music.enabled false
+```
+
+Disable Spotify artwork URLs:
+
+```sh
+dmp config set artwork.spotify.enabled false
 ```
 
 Plex artwork defaults to the item poster/thumb first, then parent/show artwork, then background art:
